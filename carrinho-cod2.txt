@@ -1,0 +1,109 @@
+ <section id="produtos">
+
+    <?php
+    //ARRAY MULTIDIMENSIONAL
+    $itens = array(['imagem' =>'img/blusa-azul.jpg','nome'=>'REGATA LETÍCIA ','preco' => '109,00'],
+                   ['imagem' =>'blusa-azul2.jpg','nome'=>'CROPPED LOREN','preco' => '149,00'],
+                   ['imagem' =>'blusa-branca.jpg','nome'=>'BLUSA JADE','preco' => '129,00']);
+
+    foreach ($itens as $key => $value) {
+    ?>
+
+
+    <div class="produto">
+    <a href="blusas.php"><img src="<?php echo $value['imagem'] ?>" /></a>
+        <p> <?php echo $value['nome'] ?></p> 
+        <p> R$ <?php echo $value['preco'] ?></p>
+        <a href="?adicionar=<?php echo $key ?>"class='botaoComprar'>Comprar</a>
+    </div> <!--produto-->
+     
+
+    <?php
+        }
+    ?>
+
+    <?php
+    //ADD CARRINHO
+    if(isset($_GET['adicionar'])){ 
+    //vamos adicionar ao carrinho
+        $idProduto = (int) $_GET['adicionar'];
+        if(isset($itens[$idProduto])){
+            if(isset($_SESSION['carrinho'][$idProduto])){
+                $_SESSION['carrinho'][$idProduto]['quantidade']++;
+            }else{
+                    $_SESSION['carrinho'][$idProduto] = array('quantidade'=>1, 'nome'=>$itens[$idProduto]['nome'], 'preco'=>$itens[$idProduto]['preco']);
+            }
+            echo '<script>alert("O item foi adicionado ao carrinho.");</script>';
+        }
+        }
+    ?>
+
+    <div class="carrinho">
+        <div class="ti-carrinho">
+            <h2>Nova compra</h2>
+            <p>
+
+    <?php
+    //QUANTIDADE DE ITENS NO CARRINHO
+    $qt_itens = 0;
+    foreach ($_SESSION['carrinho'] as $key => $value) {
+        $qt_itens += $value['quantidade'];
+    }
+    echo $qt_itens;
+
+    ?>
+
+    itens no carrinho <p>
+</div>
+    <div class="produto">        
+    <?php
+        //LISTANDO ITENS
+        foreach ($_SESSION['carrinho'] as $key => $value) {
+    ?>
+    <div class="itens">  
+        <a href="?remover=<?php echo $key ?>"><img src=""/></a>
+        <div class="nome_preco">
+            <h2><?php echo $value['nome']?></h2>
+            
+            <?php $preco = $value['preco']*$value['quantidade'];?>
+            <p>R$ <?php echo number_format($preco,2,',','.'); ?></p>
+
+        </div>
+
+        <p2><?php echo $value['quantidade']?></p2>
+        <hr>
+        </div>
+
+        <?php
+    }
+        ?>
+   
+   <?php
+   //REMOVER DO CARRINHO
+   if(isset($_GET['remover'][$idProduto])){
+    $idProduto = (int) $_GET['remover'];
+    if(isset($_SESSION['carrinho'][$idProduto])){
+        unset($_SESSION['carrinho'][$idProduto]);
+    }
+}
+
+//ESVAZIAR O CARRINHO
+    if($_GET['finalizar']){
+        unset($_SESSION['carrinho']);
+    }
+    ?>
+
+ </div>
+
+    <?php
+    //TOTAL DA COMPRA
+    foreach ($_SESSION['carrinho'] as $key => $value) {
+        $total += $value['preco']*$value['quantidade'];
+    }
+    echo number_format($total,2,',','.');
+    ?>
+
+    <a href="finalizar=<?php echo $key ?>"><button>Finalizar</button></a>
+</div>
+</div>
+</section>
